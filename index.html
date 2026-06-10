@@ -226,17 +226,19 @@ async function fetchStop(key) {
 }
 
 async function renderOepnv() {
-  const [u4Times, busTimes] = await Promise.all([fetchStop('u4'), fetchStop('bus')]);
   const now2 = new Date();
+  const day  = now2.getDay(); // 0=So,1=Mo,2=Di,3=Mi,4=Do,5=Fr,6=Sa
+  const useU4  = [1, 3, 4].includes(day); // Mo, Mi, Do
+  const useBus = [2, 5, 6, 0].includes(day); // Di, Fr, Sa, So
 
-  // Für jede Linie: erste Abfahrt bei der die Losmarschier-Zeit noch nicht vorbei ist
+  const [u4Times, busTimes] = await Promise.all([fetchStop('u4'), fetchStop('bus')]);
+
   const findNext = (times, walk) => times.find(t => (t.getTime() - walk * 60000) >= now2.getTime()) || null;
-  const nextU4  = findNext(u4Times,  STOPS.u4.walk);
-  const nextBus = findNext(busTimes, STOPS.bus.walk);
 
   const candidates = [];
-  if (nextU4)  candidates.push({ leave: new Date(nextU4.getTime()  - STOPS.u4.walk  * 60000), dep: nextU4,  linie: 'U4 → Böhmerwaldplatz (15 Min. Fußweg)' });
-  if (nextBus) candidates.push({ leave: new Date(nextBus.getTime() - STOPS.bus.walk * 60000), dep: nextBus, linie: 'Bus 59 → Zaubzerstraße (5 Min. Fußweg)' });
+  if (useU4)  { const t = findNext(u4Times,  STOPS.u4.walk);  if (t) candidates.push({ leave: new Date(t.getTime() - STOPS.u4.walk  * 60000), linie: 'U4 → Böhmerwaldplatz (15 Min. Fußweg)' }); }
+  if (useBus) { const t = findNext(busTimes, STOPS.bus.walk); if (t) candidates.push({ leave: new Date(t.getTime() - STOPS.bus.walk * 60000), linie: 'Bus 59 → Zaubzerstraße (5 Min. Fußweg)' }); }
+
   if (!candidates.length) {
     document.getElementById('leave-time').textContent = '–';
     document.getElementById('leave-desc').textContent = 'Keine weiteren Abfahrten';
@@ -249,8 +251,8 @@ async function renderOepnv() {
 
   document.getElementById('leave-time').textContent = fmtTime(best.leave) + ' Uhr';
   document.getElementById('leave-desc').textContent =
-    minLeft > 0  ? `In ${minLeft} Min. losmarschieren → ${best.linie}` :
-                   `Jetzt sofort losmarschieren → ${best.linie}`;
+    minLeft > 0 ? `In ${minLeft} Min. losmarschieren → ${best.linie}` :
+                  `Jetzt sofort losmarschieren → ${best.linie}`;
 }
 
 renderOepnv();
