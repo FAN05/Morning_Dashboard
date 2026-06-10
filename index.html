@@ -115,6 +115,7 @@ const EXAMS = [
   { name: 'International Trade',              date: new Date(2026, 6, 15,  8, 30), room: 'wird noch bekanntgegeben' },
   { name: 'Macroeconomics 2',                 date: new Date(2026, 6, 22, 13,  0), room: 'wird noch bekanntgegeben' },
   { name: 'Marketing-Management',             date: new Date(2026, 6, 23,  8, 30), room: 'wird noch bekanntgegeben' },
+  { name: 'Statistik 2',                        date: new Date(2026, 6,  4, 13, 30), room: 'TU München' },
   { name: 'Taxation and the Welfare State',   date: new Date(2026, 6, 24,  8, 30), room: 'wird noch bekanntgegeben' },
 ];
 
@@ -123,8 +124,8 @@ const now = new Date();
 const todayName = DAYS[now.getDay()];
 
 document.getElementById('greeting').textContent =
-  now.getHours() < 11 ? 'Guten Morgen 🌅' :
-  now.getHours() < 17 ? 'Guten Tag ☀️' : 'Guten Abend 🌙';
+  now.getHours() < 11 ? 'Guten Morgen, Anton 🌅' :
+  now.getHours() < 17 ? 'Guten Tag, Anton ☀️' : 'Guten Abend, Anton 🌙';
 document.getElementById('dateline').textContent =
   `${todayName}, ${now.getDate()}. ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
 
