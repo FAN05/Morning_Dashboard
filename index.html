@@ -124,8 +124,8 @@ const now = new Date();
 const todayName = DAYS[now.getDay()];
 
 document.getElementById('greeting').textContent =
-  now.getHours() < 11 ? 'Guten Morgen, Anton 🌅' :
-  now.getHours() < 17 ? 'Guten Tag, Anton ☀️' : 'Guten Abend, Anton 🌙';
+  now.getHours() < 11 ? 'Guten Morgen, Anton' :
+  now.getHours() < 17 ? 'Guten Tag, Anton' : 'Guten Abend, Anton';
 document.getElementById('dateline').textContent =
   `${todayName}, ${now.getDate()}. ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
 
@@ -203,10 +203,10 @@ async function fetchStop(key) {
   const s = STOPS[key];
   const card = document.getElementById(key + '-card');
   try {
-    const res  = await fetch(`${PROXY_URL}/departures?globalId=${s.globalId}&limit=10`);
+    const res  = await fetch(`${PROXY_URL}/departures?globalId=${s.globalId}&limit=20`);
     const all  = await res.json();
     const deps = all.filter(d => d.label && d.label.toString().includes(s.line) && (d.destination === s.dest || d.destination === s.destAlt)).slice(0, 4);
-    if (!deps.length) { card.innerHTML = `<div class="muted">Keine Abfahrten.</div>`; return null; }
+    if (!deps.length) { card.innerHTML = `<div class="muted">Keine Abfahrten.</div>`; return []; }
     card.innerHTML = `<div class="stop-label">${s.label}</div>` +
       deps.map((d, i) => {
         const t = new Date(d.realtimeDepartureTime || d.plannedDepartureTime);
@@ -218,33 +218,39 @@ async function fetchStop(key) {
             <span class="dep-min">${fmtMin(t)}</span>
           </div>`;
       }).join('');
-    return new Date(deps[0].realtimeDepartureTime || deps[0].plannedDepartureTime);
+    return deps.map(d => new Date(d.realtimeDepartureTime || d.plannedDepartureTime));
   } catch(e) {
     card.innerHTML = `<div class="muted">Verbinde… (Proxy startet, bitte 30s warten und aktualisieren)</div>`;
-    return null;
+    return [];
   }
 }
 
 async function renderOepnv() {
-  const [nextU4, nextBus] = await Promise.all([fetchStop('u4'), fetchStop('bus')]);
+  const [u4Times, busTimes] = await Promise.all([fetchStop('u4'), fetchStop('bus')]);
+  const now2 = new Date();
 
-  // Losmarschieren: für jede Linie eigener Fußweg
+  // Für jede Linie: erste Abfahrt bei der die Losmarschier-Zeit noch nicht vorbei ist
+  const findNext = (times, walk) => times.find(t => (t.getTime() - walk * 60000) >= now2.getTime()) || null;
+  const nextU4  = findNext(u4Times,  STOPS.u4.walk);
+  const nextBus = findNext(busTimes, STOPS.bus.walk);
+
   const candidates = [];
-  if (nextU4)  candidates.push(new Date(nextU4.getTime()  - STOPS.u4.walk  * 60000));
-  if (nextBus) candidates.push(new Date(nextBus.getTime() - STOPS.bus.walk * 60000));
-  if (!candidates.length) return;
+  if (nextU4)  candidates.push({ leave: new Date(nextU4.getTime()  - STOPS.u4.walk  * 60000), dep: nextU4,  linie: 'U4 → Böhmerwaldplatz (15 Min. Fußweg)' });
+  if (nextBus) candidates.push({ leave: new Date(nextBus.getTime() - STOPS.bus.walk * 60000), dep: nextBus, linie: 'Bus 59 → Zaubzerstraße (5 Min. Fußweg)' });
+  if (!candidates.length) {
+    document.getElementById('leave-time').textContent = '–';
+    document.getElementById('leave-desc').textContent = 'Keine weiteren Abfahrten';
+    return;
+  }
 
-  candidates.sort((a,b) => a - b);
-  const leave = candidates[0];
-  const isU4  = nextU4 && leave.getTime() === (nextU4.getTime() - STOPS.u4.walk * 60000);
-  const minLeft = Math.round((leave - new Date()) / 60000);
-  const linie = isU4 ? `U4 (15 Min. Fußweg zum Böhmerwaldplatz)` : `Bus 59 (5 Min. Fußweg zur Zaubzerstraße)`;
+  candidates.sort((a,b) => a.leave - b.leave);
+  const best = candidates[0];
+  const minLeft = Math.round((best.leave - now2) / 60000);
 
-  document.getElementById('leave-time').textContent = fmtTime(leave) + ' Uhr';
+  document.getElementById('leave-time').textContent = fmtTime(best.leave) + ' Uhr';
   document.getElementById('leave-desc').textContent =
-    minLeft > 0  ? `In ${minLeft} Min. los → ${linie}` :
-    minLeft === 0 ? `Jetzt sofort losgehen → ${linie}` :
-                   `Verpasst – nächste Abfahrt wählen`;
+    minLeft > 0  ? `In ${minLeft} Min. losmarschieren → ${best.linie}` :
+                   `Jetzt sofort losmarschieren → ${best.linie}`;
 }
 
 renderOepnv();
