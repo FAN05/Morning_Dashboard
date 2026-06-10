@@ -187,8 +187,8 @@ renderExams();
 const PROXY_URL = 'https://morning-dashboard-8z2u.onrender.com';
 
 const STOPS = {
-  u4:  { globalId: 'de:09162:560',  label: 'U4 → Westend',           line: 'U4', pillBg: '#00A984', walk: 15, dest: 'Westend' },
-  bus: { globalId: 'de:09162:663', label: 'Bus 59 → Ackermannbogen', line: '59', pillBg: '#005A95', walk: 5,  dest: 'Ackermannbogen' },
+  u4:  { globalId: 'de:09162:560',  label: 'U4 → Westend',           line: 'U4', pillBg: '#00A984', walk: 15, dest: 'Westendstraße', destAlt: 'Laimer Platz' },
+  bus: { globalId: 'de:09162:663', label: 'Bus 59 → Ackermannbogen', line: '59', pillBg: '#005A95', walk: 5,  dest: 'Ackermannbogen', destAlt: null },
 };
 
 function fmtTime(d) {
@@ -205,7 +205,7 @@ async function fetchStop(key) {
   try {
     const res  = await fetch(`${PROXY_URL}/departures?globalId=${s.globalId}&limit=10`);
     const all  = await res.json();
-    const deps = all.filter(d => d.label && d.label.toString().includes(s.line)).slice(0, 4);
+    const deps = all.filter(d => d.label && d.label.toString().includes(s.line) && (d.destination === s.dest || d.destination === s.destAlt)).slice(0, 4);
     if (!deps.length) { card.innerHTML = `<div class="muted">Keine Abfahrten.</div>`; return null; }
     card.innerHTML = `<div class="stop-label">${s.label}</div>` +
       deps.map((d, i) => {
