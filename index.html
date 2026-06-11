@@ -275,7 +275,7 @@ async function fetchStop(key) {
         return `${i > 0 ? '<hr class="divider">' : ''}
           <div class="dep-row">
             <span class="line-pill" style="background:${s.pillBg};color:#fff">${d.label}</span>
-            <span class="dep-dest">${s.dest}</span>
+            <span class="dep-dest">${d.destination}</span>
             <span class="dep-time">${fmtTime(t)}</span>
             <span class="dep-min">${fmtMin(t)}</span>
           </div>`;
