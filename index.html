@@ -60,12 +60,90 @@
 
   /* No lessons */
   .free-day { font-size: 14px; color: #7a7a8c; }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0; }
+  .header-left { flex: 1; }
+  .hamburger { background: none; border: none; cursor: pointer; padding: 4px; display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: #7a7a8c; border-radius: 2px; transition: background 0.2s; }
+  .hamburger:active span { background: #e8e8f0; }
+
+  /* Drawer */
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 10; }
+  .drawer-overlay.open { opacity: 1; pointer-events: all; }
+  .drawer { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #13131a; border-left: 0.5px solid #2a2a36; transition: right 0.28s cubic-bezier(0.19,1,0.22,1); z-index: 11; overflow-y: auto; padding-bottom: 40px; }
+  .drawer.open { right: 0; }
+  .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 16px 16px; border-bottom: 0.5px solid #2a2a36; }
+  .drawer-title { font-size: 17px; font-weight: 600; color: #e8e8f0; }
+  .drawer-close { background: none; border: none; color: #7a7a8c; font-size: 22px; cursor: pointer; padding: 0; line-height: 1; }
+  .drawer-section { padding: 16px 16px 0; }
+  .drawer-section-label { font-size: 11px; font-weight: 600; color: #5a5a6e; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 10px; }
+  .drawer-card { background: #1a1a22; border: 0.5px solid #2a2a36; border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .drawer-row { display: flex; align-items: center; padding: 12px 14px; gap: 10px; border-bottom: 0.5px solid #2a2a36; }
+  .drawer-row:last-child { border-bottom: none; }
+  .drawer-row-label { font-size: 14px; color: #e8e8f0; flex: 1; }
+  .drawer-row-sub { font-size: 12px; color: #7a7a8c; }
+  .drawer-day { font-size: 12px; font-weight: 600; color: #5a5a6e; width: 28px; flex-shrink: 0; }
+  .drawer-input { background: #12121a; border: 0.5px solid #2a2a36; border-radius: 6px; padding: 5px 8px; color: #e8e8f0; font-size: 13px; width: 100%; outline: none; font-family: inherit; }
+  .drawer-input:focus { border-color: #378ADD; }
 </style>
 </head>
 <body>
 
-<div class="greeting" id="greeting">–</div>
-<div class="dateline" id="dateline">–</div>
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">Menü</span>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+
+  <!-- STUNDENPLAN -->
+  <div class="drawer-section">
+    <div class="drawer-section-label">Stundenplan</div>
+    <div class="drawer-card" id="drawer-schedule"></div>
+  </div>
+
+  <!-- EINSTELLUNGEN -->
+  <div class="drawer-section">
+    <div class="drawer-section-label">Einstellungen</div>
+    <div class="drawer-card">
+      <div class="drawer-row">
+        <div style="flex:1">
+          <div class="drawer-row-label">Name</div>
+          <div class="drawer-row-sub">Wird in der Begrüßung angezeigt</div>
+        </div>
+        <input class="drawer-input" style="width:110px" id="setting-name" value="Anton" onchange="saveSetting('name', this.value); updateGreeting();">
+      </div>
+      <div class="drawer-row">
+        <div style="flex:1">
+          <div class="drawer-row-label">Fußweg U4 (Min.)</div>
+          <div class="drawer-row-sub">Böhmerwaldplatz</div>
+        </div>
+        <input class="drawer-input" style="width:60px" type="number" id="setting-walk-u4" value="15" onchange="saveSetting('walkU4', this.value); STOPS.u4.walk = parseInt(this.value);">
+      </div>
+      <div class="drawer-row">
+        <div style="flex:1">
+          <div class="drawer-row-label">Fußweg Bus 59 (Min.)</div>
+          <div class="drawer-row-sub">Zaubzerstraße</div>
+        </div>
+        <input class="drawer-input" style="width:60px" type="number" id="setting-walk-bus" value="5" onchange="saveSetting('walkBus', this.value); STOPS.bus.walk = parseInt(this.value);">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="header-left">
+    <div class="greeting" id="greeting">–</div>
+    <div class="dateline" id="dateline">–</div>
+  </div>
+  <button class="hamburger" onclick="openDrawer()" aria-label="Menü öffnen">
+    <span></span><span></span><span></span>
+  </button>
+</div>
 
 <!-- WETTER -->
 <div class="section-label">Wetter München</div>
@@ -319,6 +397,59 @@ async function renderOepnv() {
 
 renderOepnv();
 setInterval(renderOepnv, 30000);
+
+// ─── DRAWER ──────────────────────────────────────────────
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderDrawerSchedule();
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderDrawerSchedule() {
+  const container = document.getElementById('drawer-schedule');
+  const allDays = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'];
+  let html = '';
+  allDays.forEach(day => {
+    const lessons = SCHEDULE[day] || [];
+    if (!lessons.length) {
+      html += `<div class="drawer-row"><span class="drawer-day">${day.slice(0,2)}</span><span class="drawer-row-sub">Keine Veranstaltungen</span></div>`;
+    } else {
+      lessons.forEach((l, i) => {
+        html += `<div class="drawer-row">
+          <span class="drawer-day">${i === 0 ? day.slice(0,2) : ''}</span>
+          <div style="flex:1"><div class="drawer-row-label">${l.name}</div><div class="drawer-row-sub">${l.time}–${l.end} · ${l.room}</div></div>
+        </div>`;
+      });
+    }
+  });
+  container.innerHTML = html;
+}
+
+// ─── EINSTELLUNGEN ───────────────────────────────────────
+function saveSetting(key, val) {
+  try { localStorage.setItem('dashboard_' + key, val); } catch(e) {}
+}
+function loadSettings() {
+  const name   = localStorage.getItem('dashboard_name');
+  const walkU4 = localStorage.getItem('dashboard_walkU4');
+  const walkBus= localStorage.getItem('dashboard_walkBus');
+  if (name)    document.getElementById('setting-name').value = name;
+  if (walkU4)  { document.getElementById('setting-walk-u4').value = walkU4; STOPS.u4.walk = parseInt(walkU4); }
+  if (walkBus) { document.getElementById('setting-walk-bus').value = walkBus; STOPS.bus.walk = parseInt(walkBus); }
+}
+function updateGreeting() {
+  const name = document.getElementById('setting-name').value || 'Anton';
+  const h = new Date().getHours();
+  document.getElementById('greeting').textContent =
+    h < 11 ? `Guten Morgen, ${name}` : h < 17 ? `Guten Tag, ${name}` : `Guten Abend, ${name}`;
+}
+loadSettings();
 </script>
 </body>
 </html>
