@@ -330,10 +330,11 @@ async function renderWeather() {
 renderWeather();
 
 // ─── MENSA ───────────────────────────────────────────────
-async function renderMensa() {
+async function renderMensa(retry = 0) {
   const card = document.getElementById('mensa-card');
   try {
     const res   = await fetch(`${PROXY_URL}/mensa`);
+    if (!res.ok) throw new Error(res.status);
     const meals = await res.json();
     if (!meals.length) {
       card.innerHTML = '<div class="muted">Heute kein Speiseplan verfügbar.</div>';
@@ -346,7 +347,12 @@ async function renderMensa() {
         <div class="lesson-name" style="font-size:13px;font-weight:400;">${m.name}</div>
       </div>`).join('');
   } catch(e) {
-    card.innerHTML = '<div class="muted">Mensa nicht verfügbar</div>';
+    if (retry < 2) {
+      card.innerHTML = '<div class="muted">Lädt… (Proxy startet)</div>';
+      setTimeout(() => renderMensa(retry + 1), 8000);
+    } else {
+      card.innerHTML = '<div class="muted">Mensa nicht verfügbar – <button class="refresh-btn" onclick="renderMensa()">↺ Erneut versuchen</button></div>';
+    }
   }
 }
 renderMensa();
