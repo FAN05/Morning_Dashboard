@@ -173,6 +173,13 @@
   </div>
 </div>
 
+<!-- MENSA -->
+<div class="section-label" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:20px;">
+  <span>Mensa Leopoldstraße</span>
+  <button class="refresh-btn" onclick="renderMensa()">↺ Aktualisieren</button>
+</div>
+<div class="card" id="mensa-card"><div class="muted">Wird geladen…</div></div>
+
 <!-- KLAUSUREN -->
 <div class="section-label">Klausuren</div>
 <div class="card" id="exams-card"><div class="muted">Wird berechnet…</div></div>
@@ -321,6 +328,28 @@ async function renderWeather() {
   }
 }
 renderWeather();
+
+// ─── MENSA ───────────────────────────────────────────────
+async function renderMensa() {
+  const card = document.getElementById('mensa-card');
+  try {
+    const res   = await fetch(`${PROXY_URL}/mensa`);
+    const meals = await res.json();
+    if (!meals.length) {
+      card.innerHTML = '<div class="muted">Heute kein Speiseplan verfügbar.</div>';
+      return;
+    }
+    card.innerHTML = meals.map((m, i) => `
+      ${i > 0 ? '<hr class="divider">' : ''}
+      <div class="lesson-row">
+        <div class="lesson-time" style="width:80px;font-size:11px;">${m.category}</div>
+        <div class="lesson-name" style="font-size:13px;font-weight:400;">${m.name}</div>
+      </div>`).join('');
+  } catch(e) {
+    card.innerHTML = '<div class="muted">Mensa nicht verfügbar</div>';
+  }
+}
+renderMensa();
 
 // ─── ÖPNV (Live via Proxy) ──────────────────────────────
 // PROXY_URL wird nach Render-Deployment eingetragen

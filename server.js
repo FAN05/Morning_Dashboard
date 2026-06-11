@@ -49,6 +49,41 @@ app.get('/locations', async (req, res) => {
   }
 });
 
+app.get('/mensa', async (req, res) => {
+  try {
+    const url = 'https://www.studierendenwerk-muenchen-oberbayern.de/mensa/speiseplan/speiseplan_421_-de.html';
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'de-DE,de;q=0.9' }
+    });
+    const html = await response.text();
+
+    // Find today's section (date format YYYY-MM-DD)
+    const today = new Date().toISOString().slice(0, 10);
+    const startMarker = `heute_${today}`;
+    const startIdx = html.indexOf(startMarker);
+    if (startIdx === -1) return res.json([]);
+
+    // Cut from today's section to the next day section
+    const sectionStart = html.indexOf('<ul class="c-menu-dish-list">', startIdx);
+    const sectionEnd   = html.indexOf('c-schedule__item', sectionStart + 10);
+    const section      = sectionEnd > 0 ? html.slice(sectionStart, sectionEnd) : html.slice(sectionStart, sectionStart + 20000);
+
+    // Extract category + dish name pairs from today's section
+    const meals = [];
+    const itemRe = /<li[^>]+js-menu__list-item[^>]*>[\s\S]*?<span class="stwm-artname">(.*?)<\/span>[\s\S]*?<p class="c-menu-dish__title">(.*?)<\/p>[\s\S]*?<\/li>/g;
+    let m;
+    while ((m = itemRe.exec(section)) !== null) {
+      const cat  = m[1].replace(/<[^>]+>/g, '').trim();
+      const name = m[2].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim();
+      if (name) meals.push({ category: cat || '–', name });
+    }
+
+    res.json(meals);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.get('/health', (_, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 3000;
