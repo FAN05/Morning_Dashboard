@@ -71,11 +71,13 @@ app.get('/mensa', async (req, res) => {
     // Extract category + dish name pairs from today's section
     const meals = [];
     const itemRe = /<li[^>]+js-menu__list-item[^>]*>[\s\S]*?<span class="stwm-artname">(.*?)<\/span>[\s\S]*?<p class="c-menu-dish__title">(.*?)<\/p>[\s\S]*?<\/li>/g;
+    const SKIP = ['vegan', 'tagessu', 'dessert', 'obst'];
     let m;
     while ((m = itemRe.exec(section)) !== null) {
       const cat  = m[1].replace(/<[^>]+>/g, '').trim();
       const name = m[2].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim();
-      if (name) meals.push({ category: cat || '–', name });
+      const catLower = cat.toLowerCase();
+      if (name && !SKIP.some(s => catLower.includes(s))) meals.push({ category: cat || '–', name });
     }
 
     res.json(meals);
