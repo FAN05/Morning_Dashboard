@@ -485,6 +485,38 @@ function updateGreeting() {
     h < 11 ? `Guten Morgen, ${name}` : h < 17 ? `Guten Tag, ${name}` : `Guten Abend, ${name}`;
 }
 loadSettings();
+
+// ─── BENACHRICHTIGUNGEN ──────────────────────────────────
+async function setupNotifications() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    await Notification.requestPermission();
+  }
+  if (Notification.permission !== 'granted') return;
+
+  const lessons = SCHEDULE[todayName] || [];
+  const now2 = new Date();
+
+  lessons.forEach(l => {
+    const [h, m] = l.time.split(':').map(Number);
+    const lectureTime = new Date(now2);
+    lectureTime.setHours(h, m, 0, 0);
+
+    const notifyTime = new Date(lectureTime.getTime() - 10 * 60000);
+    const msUntil = notifyTime - now2;
+
+    if (msUntil > 0) {
+      setTimeout(() => {
+        new Notification('Bald geht's los', {
+          body: `${l.name} beginnt in 10 Minuten (${l.time} Uhr)`,
+          icon: '/favicon.ico',
+          silent: false,
+        });
+      }, msUntil);
+    }
+  });
+}
+setupNotifications();
 </script>
 </body>
 </html>
