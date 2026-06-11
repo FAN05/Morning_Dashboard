@@ -51,7 +51,7 @@ app.get('/locations', async (req, res) => {
 
 app.get('/mensa', async (req, res) => {
   try {
-    const url = 'https://www.studierendenwerk-muenchen-oberbayern.de/mensa/speiseplan/speiseplan_421_-de.html';
+    const url = 'https://www.studierendenwerk-muenchen-oberbayern.de/gastronomie/speiseplan/speiseplan_411_-de.html';
     const response = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'de-DE,de;q=0.9' }
     });
