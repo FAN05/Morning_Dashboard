@@ -112,9 +112,9 @@ const SCHEDULE = {
   'Dienstag': [],
   'Mittwoch': [
     { time: '10:00', end: '12:00', name: 'International Trade Lecture', room: 'Schellingstr. 3 (S) – S 002' },
+    { time: '16:00', end: '18:00', name: 'Marketing Übung', room: 'Zoom' },
   ],
   'Donnerstag': [
-    { time: '10:00', end: '11:00', name: 'Marketing Übung', room: 'Prof.-Huber-Pl. 2 (W) – LEHRTURM-W201' },
     { time: '12:00', end: '14:00', name: 'Fiwi II Tutorial', room: 'Geschwister-Scholl-Pl. 1 (D) – D 209' },
     { time: '16:00', end: '18:00', name: 'International Trade Tutorial', room: 'Geschwister-Scholl-Pl. 1 (M) – M 105' },
   ],
@@ -249,7 +249,7 @@ renderWeather();
 const PROXY_URL = 'https://morning-dashboard-8z2u.onrender.com';
 
 const STOPS = {
-  u4:  { globalId: 'de:09162:560',  label: 'U4 → Westend',           line: 'U4', pillBg: '#00A984', walk: 15, dest: 'Westendstraße', destAlt: 'Laimer Platz' },
+  u4:  { globalId: 'de:09162:560',  label: 'U4 → Westend',           line: 'U4', pillBg: '#00A984', walk: 15, dest: 'Westendstraße', destAlt: 'Laimer Platz', destAlt2: 'Theresienwiese' },
   bus: { globalId: 'de:09162:663', label: 'Bus 59 → Ackermannbogen', line: '59', pillBg: '#005A95', walk: 5,  dest: 'Ackermannbogen', destAlt: null },
 };
 
@@ -267,7 +267,7 @@ async function fetchStop(key) {
   try {
     const res  = await fetch(`${PROXY_URL}/departures?globalId=${s.globalId}&limit=20`);
     const all  = await res.json();
-    const deps = all.filter(d => d.label && d.label.toString().includes(s.line) && (d.destination === s.dest || d.destination === s.destAlt)).slice(0, 4);
+    const deps = all.filter(d => d.label && d.label.toString().includes(s.line) && (d.destination === s.dest || d.destination === s.destAlt || d.destination === s.destAlt2)).slice(0, 4);
     if (!deps.length) { card.innerHTML = `<div class="muted">Keine Abfahrten.</div>`; return []; }
     card.innerHTML = `<div class="stop-label">${s.label}</div>` +
       deps.map((d, i) => {
@@ -290,8 +290,8 @@ async function fetchStop(key) {
 async function renderOepnv() {
   const now2 = new Date();
   const day  = now2.getDay(); // 0=So,1=Mo,2=Di,3=Mi,4=Do,5=Fr,6=Sa
-  const useU4  = [1, 3, 4].includes(day); // Mo, Mi, Do
-  const useBus = [2, 5, 6, 0].includes(day); // Di, Fr, Sa, So
+  const useU4  = [1, 3].includes(day); // Mo, Mi
+  const useBus = [2, 4, 5, 6, 0].includes(day); // Di, Do, Fr, Sa, So
 
   const [u4Times, busTimes] = await Promise.all([fetchStop('u4'), fetchStop('bus')]);
 
