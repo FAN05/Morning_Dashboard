@@ -9,82 +9,94 @@
 <title>Morning Dashboard</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: #0f0f12; color: #e8e8f0; min-height: 100vh; padding: 20px 16px 40px; }
-  .greeting { font-size: 24px; font-weight: 600; color: #e8e8f0; margin-bottom: 3px; }
-  .dateline { font-size: 13px; color: #7a7a8c; margin-bottom: 24px; }
-  .section-label { font-size: 11px; font-weight: 600; color: #5a5a6e; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 8px; margin-top: 20px; }
-  .card { background: #1a1a22; border: 0.5px solid #2a2a36; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
-  .divider { border: none; border-top: 0.5px solid #2a2a36; margin: 10px 0; }
-  .muted { color: #7a7a8c; font-size: 13px; }
-
-  /* Schedule */
-  .lesson-row { display: flex; gap: 10px; align-items: flex-start; }
-  .lesson-time { font-size: 12px; color: #5a5a6e; width: 44px; flex-shrink: 0; padding-top: 2px; }
-  .now-dot { width: 7px; height: 7px; border-radius: 50%; background: #97C459; margin-top: 4px; flex-shrink: 0; }
-  .spacer-dot { width: 7px; flex-shrink: 0; }
-  .lesson-name { font-size: 14px; font-weight: 500; color: #e8e8f0; line-height: 1.3; }
-  .lesson-room { font-size: 12px; color: #5a5a6e; margin-top: 2px; }
-
-  /* ÖPNV */
-  .dep-row { display: flex; align-items: center; gap: 8px; }
-  .line-pill { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; min-width: 36px; text-align: center; flex-shrink: 0; }
-  .dep-dest { flex: 1; font-size: 13px; color: #7a7a8c; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .dep-time { font-size: 13px; color: #e8e8f0; }
-  .dep-min { font-size: 12px; color: #7a7a8c; min-width: 38px; text-align: right; }
-  .stop-label { font-size: 11px; color: #5a5a6e; margin-bottom: 8px; }
-  .refresh-btn { font-size: 12px; color: #378ADD; background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; float: right; }
-
-  /* Leave card */
-  .cta { background: #1a2a1a; border: 0.5px solid #2a3a2a; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
-  .cta-time { font-size: 30px; font-weight: 600; color: #97C459; }
-  .cta-label { font-size: 12px; color: #639922; margin-top: 3px; }
-  .walk-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-  .walk-input { background: #12121a; border: 0.5px solid #2a2a36; border-radius: 6px; padding: 5px 8px; color: #e8e8f0; font-size: 13px; width: 46px; text-align: center; outline: none; font-family: inherit; }
-
-  /* Exams */
-  .exam-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .exam-name { font-size: 14px; font-weight: 500; color: #e8e8f0; }
-  .exam-meta { font-size: 12px; color: #7a7a8c; margin-top: 2px; }
-  .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
-  .badge-red { background: #3a1a1a; color: #f09595; }
-  .badge-amber { background: #2a2010; color: #FAC775; }
-  .badge-green { background: #1a2a1a; color: #C0DD97; }
-
-  /* Weather */
-  .weather-row { display: flex; align-items: center; gap: 12px; }
-  .weather-temp { font-size: 32px; font-weight: 600; color: #e8e8f0; }
-  .weather-info { flex: 1; }
-  .weather-desc { font-size: 14px; color: #e8e8f0; }
-  .weather-sub  { font-size: 12px; color: #7a7a8c; margin-top: 3px; }
-  .weather-icon { font-size: 36px; }
-
-  /* No lessons */
-  .free-day { font-size: 14px; color: #7a7a8c; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: #0f0f12; color: #e8e8f0; min-height: 100vh; padding: 20px 16px 48px; }
 
   /* Header */
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0; }
-  .header-left { flex: 1; }
-  .hamburger { background: none; border: none; cursor: pointer; padding: 4px; display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
-  .hamburger span { display: block; width: 22px; height: 2px; background: #7a7a8c; border-radius: 2px; transition: background 0.2s; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .greeting { font-size: 22px; font-weight: 600; color: #e8e8f0; margin-bottom: 2px; }
+  .dateline { font-size: 12px; color: #5a5a6e; }
+  .hamburger { background: none; border: none; cursor: pointer; padding: 4px; display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+  .hamburger span { display: block; width: 20px; height: 1.5px; background: #5a5a6e; border-radius: 2px; }
   .hamburger:active span { background: #e8e8f0; }
 
+  /* Section labels */
+  .section-label { font-size: 10px; font-weight: 700; color: #4a4a60; letter-spacing: 0.1em; text-transform: uppercase; margin: 18px 0 7px; display: flex; justify-content: space-between; align-items: center; }
+  .refresh-btn { font-size: 12px; color: #378ADD; background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+  /* Base card */
+  .card { background: #1a1a22; border: 0.5px solid #252530; border-radius: 16px; margin-bottom: 8px; overflow: hidden; }
+  .card-pad { padding: 13px 15px; }
+  .row-divider { border: none; border-top: 0.5px solid #20202c; margin: 0; }
+  .muted { color: #7a7a8c; font-size: 13px; padding: 13px 15px; display: block; }
+
+  /* Weather */
+  .weather-card { background: #141c28; border: 0.5px solid #1e2e44; border-radius: 16px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+  .weather-icon { font-size: 34px; flex-shrink: 0; }
+  .weather-desc { font-size: 13px; color: #c0cce0; font-weight: 500; }
+  .weather-sub { font-size: 11px; color: #5a7a9a; margin-top: 3px; }
+  .weather-badge { display: inline-block; margin-top: 5px; font-size: 10px; background: #1a2a3e; color: #7ab8e8; border-radius: 20px; padding: 2px 8px; }
+  .weather-temp { font-size: 30px; font-weight: 600; color: #e8e8f0; flex-shrink: 0; }
+
+  /* Schedule rows */
+  .lesson-row { display: flex; align-items: center; gap: 10px; padding: 11px 15px; }
+  .l-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .l-dot-now  { background: #97C459; box-shadow: 0 0 0 3px rgba(151,196,89,0.18); }
+  .l-dot-next { background: #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,0.18); }
+  .l-dot-done { background: #2a2a3a; }
+  .l-time { font-size: 11px; color: #4a4a62; width: 36px; flex-shrink: 0; }
+  .l-name { font-size: 13px; font-weight: 500; color: #e8e8f0; flex: 1; line-height: 1.3; }
+  .l-name-done { color: #4a4a62; font-weight: 400; }
+  .l-room { font-size: 11px; color: #4a4a62; margin-top: 1px; }
+  .now-badge { font-size: 9px; font-weight: 600; background: rgba(151,196,89,0.14); color: #97C459; border-radius: 20px; padding: 2px 7px; flex-shrink: 0; }
+  .free-day { font-size: 13px; color: #5a5a6e; padding: 13px 15px; }
+
+  /* Leave CTA */
+  .cta { background: #101e10; border: 0.5px solid #1c341c; border-radius: 16px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; }
+  .cta-icon { font-size: 26px; flex-shrink: 0; }
+  .cta-time { font-size: 26px; font-weight: 700; color: #97C459; line-height: 1; }
+  .cta-desc { font-size: 11px; color: #4a7a4a; margin-top: 3px; line-height: 1.4; }
+
+  /* Transit rows */
+  .dep-row { display: flex; align-items: center; gap: 9px; padding: 10px 15px; }
+  .line-pill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; min-width: 32px; text-align: center; flex-shrink: 0; }
+  .dep-dest { flex: 1; font-size: 12px; color: #7a7a8c; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .dep-time { font-size: 13px; color: #e8e8f0; font-weight: 500; }
+  .dep-min { font-size: 11px; color: #4a4a62; min-width: 36px; text-align: right; }
+  .stop-label { font-size: 10px; font-weight: 600; color: #4a4a62; letter-spacing: 0.06em; text-transform: uppercase; padding: 10px 15px 4px; }
+
+  /* Mensa rows */
+  .mensa-row { display: flex; align-items: center; gap: 10px; padding: 9px 15px; }
+  .mensa-cat { font-size: 10px; font-weight: 700; color: #4a4a62; text-transform: uppercase; letter-spacing: 0.07em; width: 54px; flex-shrink: 0; }
+  .mensa-name { font-size: 12px; color: #b0b0c4; flex: 1; line-height: 1.3; }
+
+  /* Exam rows */
+  .exam-row { display: flex; align-items: center; gap: 8px; padding: 11px 15px 6px; }
+  .exam-name { font-size: 13px; font-weight: 500; color: #e8e8f0; flex: 1; }
+  .exam-date { font-size: 11px; color: #4a4a62; padding: 0 15px 4px; }
+  .badge { font-size: 10px; padding: 2px 9px; border-radius: 20px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+  .badge-red   { background: #3a1515; color: #f09595; }
+  .badge-amber { background: #2a1e08; color: #FAC775; }
+  .badge-green { background: #152415; color: #97C459; }
+  .exam-prog { height: 2px; background: #1e1e2a; margin: 0 15px 10px; border-radius: 2px; overflow: hidden; }
+  .exam-prog-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
   /* Drawer */
-  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 10; }
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 10; }
   .drawer-overlay.open { opacity: 1; pointer-events: all; }
-  .drawer { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #13131a; border-left: 0.5px solid #2a2a36; transition: right 0.28s cubic-bezier(0.19,1,0.22,1); z-index: 11; overflow-y: auto; padding-bottom: 40px; }
+  .drawer { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #111118; border-left: 0.5px solid #252530; transition: right 0.28s cubic-bezier(0.19,1,0.22,1); z-index: 11; overflow-y: auto; padding-bottom: 40px; }
   .drawer.open { right: 0; }
-  .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 16px 16px; border-bottom: 0.5px solid #2a2a36; }
-  .drawer-title { font-size: 17px; font-weight: 600; color: #e8e8f0; }
-  .drawer-close { background: none; border: none; color: #7a7a8c; font-size: 22px; cursor: pointer; padding: 0; line-height: 1; }
+  .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 22px 16px 16px; border-bottom: 0.5px solid #252530; }
+  .drawer-title { font-size: 16px; font-weight: 600; color: #e8e8f0; }
+  .drawer-close { background: none; border: none; color: #5a5a6e; font-size: 20px; cursor: pointer; padding: 0; line-height: 1; }
   .drawer-section { padding: 16px 16px 0; }
-  .drawer-section-label { font-size: 11px; font-weight: 600; color: #5a5a6e; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 10px; }
-  .drawer-card { background: #1a1a22; border: 0.5px solid #2a2a36; border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
-  .drawer-row { display: flex; align-items: center; padding: 12px 14px; gap: 10px; border-bottom: 0.5px solid #2a2a36; }
+  .drawer-section-label { font-size: 10px; font-weight: 700; color: #4a4a60; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+  .drawer-card { background: #1a1a22; border: 0.5px solid #252530; border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .drawer-row { display: flex; align-items: center; padding: 11px 14px; gap: 10px; border-bottom: 0.5px solid #20202c; }
   .drawer-row:last-child { border-bottom: none; }
-  .drawer-row-label { font-size: 14px; color: #e8e8f0; flex: 1; }
-  .drawer-row-sub { font-size: 12px; color: #7a7a8c; }
-  .drawer-day { font-size: 12px; font-weight: 600; color: #5a5a6e; width: 28px; flex-shrink: 0; }
-  .drawer-input { background: #12121a; border: 0.5px solid #2a2a36; border-radius: 6px; padding: 5px 8px; color: #e8e8f0; font-size: 13px; width: 100%; outline: none; font-family: inherit; }
+  .drawer-row-label { font-size: 13px; color: #e8e8f0; flex: 1; }
+  .drawer-row-sub { font-size: 11px; color: #5a5a6e; margin-top: 1px; }
+  .drawer-day { font-size: 11px; font-weight: 700; color: #4a4a62; width: 26px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.05em; }
+  .drawer-input { background: #0f0f18; border: 0.5px solid #252530; border-radius: 6px; padding: 5px 8px; color: #e8e8f0; font-size: 13px; width: 100%; outline: none; font-family: inherit; }
   .drawer-input:focus { border-color: #378ADD; }
 </style>
 </head>
@@ -136,7 +148,7 @@
 </div>
 
 <div class="header">
-  <div class="header-left">
+  <div>
     <div class="greeting" id="greeting">–</div>
     <div class="dateline" id="dateline">–</div>
   </div>
@@ -146,43 +158,35 @@
 </div>
 
 <!-- WETTER -->
-<div class="section-label">Wetter München</div>
-<div class="card" id="weather-card"><div class="muted">Wird geladen…</div></div>
+<div class="section-label">Wetter</div>
+<div class="weather-card" id="weather-card"><span class="muted">Wird geladen…</span></div>
 
 <!-- STUNDENPLAN -->
 <div class="section-label">Heute</div>
-<div class="card" id="schedule-card"><div class="muted">Wird geladen…</div></div>
-
-<!-- ÖPNV -->
-<div class="section-label" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:20px;">
-  <span>Abfahrten</span>
-  <button class="refresh-btn" onclick="renderOepnv()">↺ Aktualisieren</button>
-</div>
-<div class="card" id="u4-card"></div>
-<div class="card" id="bus-card"></div>
+<div class="card" id="schedule-card"><span class="muted">Wird geladen…</span></div>
 
 <!-- LOSMARSCHIEREN -->
-<div id="leave-section">
-  <div class="section-label">Wann losmarschieren?</div>
-  <div class="cta">
+<div class="section-label">Losmarschieren</div>
+<div class="cta" id="cta-card">
+  <div class="cta-icon">🚶</div>
+  <div>
     <div class="cta-time" id="leave-time">–</div>
-    <div class="cta-label" id="leave-desc">–</div>
-    <div style="margin-top:8px;font-size:12px;color:#5a5a6e;">
-      U4: 15 Min. Fußweg zum Böhmerwaldplatz &nbsp;·&nbsp; Bus 59: 5 Min. zur Zaubzerstraße
-    </div>
+    <div class="cta-desc" id="leave-desc">–</div>
   </div>
 </div>
 
+<!-- ÖPNV -->
+<div class="section-label"><span>Abfahrten</span><button class="refresh-btn" onclick="renderOepnv()">↺ Aktualisieren</button></div>
+<div class="card" id="u4-card"></div>
+<div class="card" id="bus-card"></div>
+
 <!-- MENSA -->
-<div class="section-label" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:20px;">
-  <span>Mensa Leopoldstraße</span>
-  <button class="refresh-btn" onclick="renderMensa()">↺ Aktualisieren</button>
-</div>
-<div class="card" id="mensa-card"><div class="muted">Wird geladen…</div></div>
+<div class="section-label"><span>Mensa Leopoldstraße</span><button class="refresh-btn" onclick="renderMensa()">↺ Aktualisieren</button></div>
+<div class="card" id="mensa-card"><span class="muted">Wird geladen…</span></div>
 
 <!-- KLAUSUREN -->
 <div class="section-label">Klausuren</div>
-<div class="card" id="exams-card"><div class="muted">Wird berechnet…</div></div>
+<div class="card" id="exams-card"><span class="muted">Wird berechnet…</span></div>
 
 <script>
 // ─── DATEN ───────────────────────────────────────────────
@@ -235,21 +239,28 @@ function renderSchedule() {
     return;
   }
   const nowMin = now.getHours() * 60 + now.getMinutes();
+  const nextIdx = lessons.findIndex(l => {
+    const [sh, sm] = l.time.split(':').map(Number);
+    return sh * 60 + sm > nowMin;
+  });
   card.innerHTML = lessons.map((l, i) => {
     const [sh, sm] = l.time.split(':').map(Number);
     const [eh, em] = l.end.split(':').map(Number);
     const start = sh * 60 + sm, end = eh * 60 + em;
     const past    = end < nowMin;
     const current = start <= nowMin && nowMin < end;
+    const isNext  = i === nextIdx;
+    const dotClass = current ? 'l-dot l-dot-now' : isNext ? 'l-dot l-dot-next' : 'l-dot l-dot-done';
     return `
-      ${i > 0 ? '<hr class="divider">' : ''}
-      <div class="lesson-row" style="opacity:${past ? '0.4' : '1'}">
-        <div class="lesson-time">${l.time}</div>
-        ${current ? '<div class="now-dot"></div>' : '<div class="spacer-dot"></div>'}
-        <div>
-          <div class="lesson-name">${l.name}</div>
-          <div class="lesson-room">${l.room}</div>
+      ${i > 0 ? '<hr class="row-divider">' : ''}
+      <div class="lesson-row">
+        <div class="l-dot ${current ? 'l-dot-now' : isNext ? 'l-dot-next' : 'l-dot-done'}"></div>
+        <div class="l-time">${l.time}</div>
+        <div style="flex:1">
+          <div class="l-name ${past ? 'l-name-done' : ''}">${l.name}</div>
+          <div class="l-room">${l.room}</div>
         </div>
+        ${current ? '<span class="now-badge">Jetzt</span>' : ''}
       </div>`;
   }).join('');
 }
@@ -259,22 +270,22 @@ renderSchedule();
 function renderExams() {
   const upcoming = EXAMS.filter(e => e.date > now).sort((a, b) => a.date - b.date);
   const card = document.getElementById('exams-card');
-  if (!upcoming.length) { card.innerHTML = '<div class="muted">Keine anstehenden Klausuren.</div>'; return; }
+  if (!upcoming.length) { card.innerHTML = '<span class="muted">Keine anstehenden Klausuren.</span>'; return; }
+  const maxDays = Math.max(...upcoming.map(e => Math.ceil((e.date - now) / 86400000)));
   card.innerHTML = upcoming.map((e, i) => {
     const days = Math.ceil((e.date - now) / 86400000);
-    const cls  = days <= 7 ? 'badge-red' : days <= 21 ? 'badge-amber' : 'badge-green';
-    const d    = e.date;
+    const cls  = days <= 14 ? 'badge-red' : days <= 28 ? 'badge-amber' : 'badge-green';
+    const barColor = days <= 14 ? '#f09595' : days <= 28 ? '#FAC775' : '#97C459';
+    const barWidth = Math.max(8, Math.round((1 - days / maxDays) * 100));
+    const d = e.date;
     return `
-      ${i > 0 ? '<hr class="divider">' : ''}
+      ${i > 0 ? '<hr class="row-divider">' : ''}
       <div class="exam-row">
         <div class="exam-name">${e.name}</div>
-        <span class="badge ${cls}">in ${days} Tagen</span>
+        <span class="badge ${cls}">in ${days}d</span>
       </div>
-      <div class="exam-meta">
-        ${DAYS[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()]} ·
-        ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} Uhr ·
-        ${e.room}
-      </div>`;
+      <div class="exam-date">${DAYS[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()]} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} Uhr · ${e.room}</div>
+      <div class="exam-prog"><div class="exam-prog-fill" style="width:${barWidth}%;background:${barColor}"></div></div>`;
   }).join('');
 }
 renderExams();
@@ -313,18 +324,17 @@ async function renderWeather() {
     const tmin = Math.round(d.temperature_2m_min[0]);
     const rain = d.precipitation_sum[0];
     const wind = Math.round(c.windspeed_10m);
-    const jacket = rain > 0.5 ? ' · Regenjacke mitnehmen 🌂' : '';
+    const jacket = rain > 0.5 ? '<span class="weather-badge">Regenjacke mitnehmen</span>' : '';
     card.innerHTML = `
-      <div class="weather-row">
-        <div class="weather-icon">${icon}</div>
-        <div class="weather-info">
-          <div class="weather-desc">${desc}${jacket}</div>
-          <div class="weather-sub">${tmin}° / ${tmax}° · Wind ${wind} km/h · Regen ${rain} mm</div>
-        </div>
-        <div class="weather-temp">${temp}°</div>
-      </div>`;
+      <div class="weather-icon">${icon}</div>
+      <div style="flex:1">
+        <div class="weather-desc">${desc}</div>
+        <div class="weather-sub">${tmin}° / ${tmax}° · Wind ${wind} km/h · ${rain} mm</div>
+        ${jacket}
+      </div>
+      <div class="weather-temp">${temp}°</div>`;
   } catch(e) {
-    card.innerHTML = '<div class="muted">Wetter nicht verfügbar</div>';
+    card.innerHTML = '<span class="muted">Wetter nicht verfügbar</span>';
   }
 }
 renderWeather();
@@ -341,10 +351,10 @@ async function renderMensa(retry = 0) {
       return;
     }
     card.innerHTML = meals.map((m, i) => `
-      ${i > 0 ? '<hr class="divider">' : ''}
-      <div class="lesson-row">
-        <div class="lesson-time" style="width:80px;font-size:11px;">${m.category}</div>
-        <div class="lesson-name" style="font-size:13px;font-weight:400;">${m.name}</div>
+      ${i > 0 ? '<hr class="row-divider">' : ''}
+      <div class="mensa-row">
+        <div class="mensa-cat">${m.category}</div>
+        <div class="mensa-name">${m.name}</div>
       </div>`).join('');
   } catch(e) {
     if (retry < 2) {
@@ -385,7 +395,7 @@ async function fetchStop(key) {
     card.innerHTML = `<div class="stop-label">${s.label}</div>` +
       deps.map((d, i) => {
         const t = new Date(d.realtimeDepartureTime || d.plannedDepartureTime);
-        return `${i > 0 ? '<hr class="divider">' : ''}
+        return `${i > 0 ? '<hr class="row-divider">' : ''}
           <div class="dep-row">
             <span class="line-pill" style="background:${s.pillBg};color:#fff">${d.label}</span>
             <span class="dep-dest">${d.destination}</span>
@@ -426,8 +436,8 @@ async function renderOepnv() {
 
   document.getElementById('leave-time').textContent = fmtTime(best.leave) + ' Uhr';
   document.getElementById('leave-desc').textContent =
-    minLeft > 0 ? `In ${minLeft} Min. losmarschieren → ${best.linie}` :
-                  `Jetzt sofort losmarschieren → ${best.linie}`;
+    minLeft > 0 ? `In ${minLeft} Min. → ${best.linie}` :
+                  `Jetzt sofort → ${best.linie}`;
 }
 
 renderOepnv();
