@@ -66,7 +66,7 @@
 
   /* Mensa rows */
   .mensa-row { display: flex; align-items: center; gap: 10px; padding: 9px 15px; }
-  .mensa-cat { font-size: 10px; font-weight: 700; color: #4a4a62; text-transform: uppercase; letter-spacing: 0.07em; width: 54px; flex-shrink: 0; }
+  .mensa-cat { font-size: 10px; font-weight: 700; color: #4a4a62; text-transform: uppercase; letter-spacing: 0.07em; width: 62px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .mensa-name { font-size: 12px; color: #b0b0c4; flex: 1; line-height: 1.3; }
 
   /* Exam rows */
@@ -350,12 +350,15 @@ async function renderMensa(retry = 0) {
       card.innerHTML = '<div class="muted">Heute kein Speiseplan verfügbar.</div>';
       return;
     }
-    card.innerHTML = meals.map((m, i) => `
-      ${i > 0 ? '<hr class="row-divider">' : ''}
+    const CAT_SHORT = { 'Vegetarisch/fleischlos': 'Veggie', 'Studitopf': 'Studi', 'Tagessupe, Brot, Obst': 'Suppe' };
+    card.innerHTML = meals.map((m, i) => {
+      const cat = CAT_SHORT[m.category] || m.category;
+      return `${i > 0 ? '<hr class="row-divider">' : ''}
       <div class="mensa-row">
-        <div class="mensa-cat">${m.category}</div>
+        <div class="mensa-cat">${cat}</div>
         <div class="mensa-name">${m.name}</div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } catch(e) {
     if (retry < 2) {
       card.innerHTML = '<div class="muted">Lädt… (Proxy startet)</div>';
